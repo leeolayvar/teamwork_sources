@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hello World from HTML by Koding</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="//koding.com/hello/css/style.css">
+<!--[if IE]>
+  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <script src="https://cdn.firebase.com/v0/firebase.js"></script>
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+</head>
+<body class="php">
+<div id="container">
+  <div id="main" role="main" class="hellobox">
+    <header><a href="http://koding.com">Koding.com</a></header>
+    <h1>Hello World!</h1>
+    <h2>From HTML
+    </h2>
+  </div>
+  <nav>
+    <ul>
+      <li><a class="active" href="index.html">HTML</a></li>
+      <li><a href="php.php">PHP</a></li>
+      <li><a href="python.py">Python</a></li>
+      <li><a href="perl.pl">Perl</a></li>
+      <li><a href="ruby.rb">Ruby</a></li>
+    </ul>
+  </nav>
+  <footer>
+<input type='text' id='nameInput' placeholder='Name'>
+<input type='text' id='messageInput' placeholder='Message...'>
+<pre id='messagesDiv'></pre>
+  </footer>
+</div>
+<script>
+  // This is an added function from the original demo.
+  // The purpose of this is to ensure that each imported user has their own
+  // session, so we're using the username address as the session name. You can
+  // change this easily by modifying the firebase demo url below.
+  var getSession = function() {
+    session = location.hostname // Get the hostname
+    session = session.substring(0, session.indexOf('.kd.io')) // remove after username
+    return session.substring(session.lastIndexOf('.')+1) // remove before username
+  }
+
+  // Get a reference to the root of the chat data.
+  var messagesRef = new Firebase('https://'+getSession()+'.firebaseio-demo.com/');
+
+  // When the user presses enter on the message input, write the message to firebase.
+  $('#messageInput').keypress(function (e) {
+    if (e.keyCode == 13) {
+      var name = $('#nameInput').val();
+      var text = $('#messageInput').val();
+      messagesRef.push({name:name, text:text});
+      $('#messageInput').val('');
+    }
+  });
+
+  // Add a callback that is triggered for each chat message.
+  messagesRef.limit(10).on('child_added', function (snapshot) {
+    var message = snapshot.val();
+    $('<div/>').text(message.text).prepend($('<em/>')
+      .text(message.name+': ')).appendTo($('#messagesDiv'));
+    $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+  });
+</script>
+</body>
+</html>
+
+
+
+
